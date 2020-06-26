@@ -5,7 +5,7 @@ using namespace std;
 
 // Find best matches for keypoints in two camera images based on several matching methods
 void matchDescriptors(std::vector<cv::KeyPoint> &kPtsSource, std::vector<cv::KeyPoint> &kPtsRef, cv::Mat &descSource, cv::Mat &descRef,
-                      std::vector<cv::DMatch> &matches, std::string descriptorType, std::string matcherType, std::string selectorType)
+                      std::vector<cv::DMatch> &matches, std::string descriptorCategory, std::string matcherType, std::string selectorType)
 {
     bool crossCheck = false;
     cv::Ptr<cv::DescriptorMatcher> matcher;
@@ -16,19 +16,19 @@ void matchDescriptors(std::vector<cv::KeyPoint> &kPtsSource, std::vector<cv::Key
         int normType;
 
         // with SIFT
-        if (descriptorType.compare("DES_HOG") == 0)
+        if (descriptorCategory.compare("DES_HOG") == 0)
         {
             normType = cv::NORM_L2;
         }
 
         // with all other binary descriptors
-        else if (descriptorType.compare("DES_BINARY") == 0)
+        else if (descriptorCategory.compare("DES_BINARY") == 0)
         {
             normType = cv::NORM_HAMMING;
         }
         
         else {
-            throw invalid_argument(descriptorType + " is not a valid descriptorCategory");
+            throw invalid_argument(descriptorCategory + " is not a valid descriptorCategory");
         }
 
         matcher = cv::BFMatcher::create(normType, crossCheck);
@@ -38,20 +38,20 @@ void matchDescriptors(std::vector<cv::KeyPoint> &kPtsSource, std::vector<cv::Key
     else if (matcherType.compare("MAT_FLANN") == 0)
     {
         // with SIFT
-        if (descriptorType.compare("DES_HOG") == 0)
+        if (descriptorCategory.compare("DES_HOG") == 0)
         {
             matcher = cv::FlannBasedMatcher::create();
         }
 
         // with all other binary descriptorTypes
-        else if (descriptorType.compare("DES_BINARY") == 0)
+        else if (descriptorCategory.compare("DES_BINARY") == 0)
         {
             const cv::Ptr<cv::flann::IndexParams>& indexParams = cv::makePtr<cv::flann::LshIndexParams>(12, 20, 2);
             matcher = cv::makePtr<cv::FlannBasedMatcher>(indexParams);
         }
 
         else {
-            throw invalid_argument(descriptorType + " is not a valid descriptorCategory");
+            throw invalid_argument(descriptorCategory + " is not a valid descriptorCategory");
         }
     }
 
